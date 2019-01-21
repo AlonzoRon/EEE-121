@@ -41,11 +41,12 @@ bool maybe_prime(int n){
 int main(){
 	// cout << g(4, 3) << endl;
 	// cout << maybe_prime(3) << endl;
-	
+
 	for(int i = 100; i <= 200; i++){
+		// cout << maybe_prime(i) << endl;
 		if(maybe_prime(i) == 1){
 			cout << i << endl;
 		}
 	}
-	
+
 }
