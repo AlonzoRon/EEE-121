@@ -23,6 +23,14 @@ int gcd(int m, int n){
 	return gcd(n, m % n);
 }
 
+bool is_prime(int n){
+	for (size_t i = 2; i < n; i++) {
+		// cout << i << endl;
+		if (n % i == 0) return false;
+	}
+	return true;
+}
+
 bool maybe_prime(int n){
 	int x = 2;
 	int y = 2;
@@ -41,12 +49,12 @@ bool maybe_prime(int n){
 int main(){
 	// cout << g(4, 3) << endl;
 	// cout << maybe_prime(3) << endl;
+	// cout << 125 % 5 << endl;
 
 	for(int i = 100; i <= 200; i++){
 		// cout << maybe_prime(i) << endl;
-		if(maybe_prime(i) == 1){
+		if(maybe_prime(i) && !is_prime(i)){
 			cout << i << endl;
 		}
 	}
-
 }
