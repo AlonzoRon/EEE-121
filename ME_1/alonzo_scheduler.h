@@ -8,7 +8,6 @@ public:
     bool operator>(Time);
 
     int operator-(Time);
-
 private:
     unsigned int hh, mm;
     unsigned int total_minutes;
@@ -23,14 +22,13 @@ Time::Time(unsigned int hh, unsigned int mm){
 }
 
 Time::Time(unsigned int hh, unsigned int mm, std::string meridiem){
-    if (meridiem == "AM") {
-        this -> hh = hh;
-    }
-    else if (meridiem == "PM") {
-        this -> hh = 12 + hh;
-    }
-        this -> mm = mm;
-        this -> total_minutes = 60 * this -> hh + this -> mm;
+    if (hh == 12 && meridiem == "AM")       this -> hh = 0; //special cases for 12 am and 12 pm
+    else if (hh == 12 && meridiem == "PM")  this -> hh = 12;
+    else if (meridiem == "AM")              this -> hh = hh;
+    else if (meridiem == "PM")              this -> hh = 12 + hh;
+
+    this -> mm = mm;
+    this -> total_minutes = 60 * this -> hh + this -> mm;
 }
 
 bool Time::operator==(Time other){
@@ -108,7 +106,7 @@ Interval Interval::overlap(Interval other){
     o_hours = o_min / 60; // integer division to get the hours equivalent
     o_minutes = o_min - (o_hours * 60); // remainder is the minutes equivalent
 
-    //std::cout << o_hours << " " << o_minutes << std::endl;
+    std::cout << o_hours << " " << o_minutes << std::endl;
 
     return(Interval(Time(o_hours, o_minutes), o_duration));
 }
