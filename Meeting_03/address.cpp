@@ -8,6 +8,7 @@ int main(){
     char y = 'x';
     int z = 10;
     double w = 12.3;
+
      // cout << &a << endl;
      // cout << &b << endl;
      // cout << &c << endl;
@@ -19,4 +20,12 @@ int main(){
      cout << sizeof(y) << endl;
      cout << sizeof(z) << endl;
      cout << sizeof(w) << endl;
+
+     /*
+      float - 4 bytes
+      bool - 1 byte
+      char - 1 byte
+      int - 4 bytes
+      double - 8 bytes
+      */
 }
