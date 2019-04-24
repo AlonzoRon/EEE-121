@@ -53,6 +53,8 @@ int main(){
         */
 
         TreeNode *P = new TreeNode('$', A->freq + B->freq);
+        P->left = A;
+        P->right = B;
         PQ.push(P);
     }
 
