@@ -147,8 +147,8 @@ vector<string> new_groupings(vector<Member> &classlist, vector<string> &name_poo
     // traversed new_pool in a way that the final grouping has repeating members)
     // with that, we shuffle the name_pool and try again using a recursive call
     if (new_group.size() < name_pool.size()){
-            random_shuffle(name_pool.begin(),name_pool.end());
-            return new_groupings(classlist, name_pool);
+        random_shuffle(name_pool.begin(),name_pool.end());
+        return new_groupings(classlist, name_pool);
     }
 
     // when you get here, meaning a complete and valid grouping has been created
