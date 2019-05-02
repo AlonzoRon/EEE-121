@@ -47,9 +47,9 @@ int main(){
     //     for(auto x: v) cout << x << " ";
     //     cout << endl;
     //     ctr++;
-//
-    // }
+    //
+        // }
 
-    cout << ctr << endl;
+    //cout << ctr << endl;
 
 }
