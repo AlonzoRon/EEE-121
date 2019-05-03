@@ -31,6 +31,13 @@ void backtrack(vector<string> stage[], int idx, int num_stages){
         return;
     }
 
+    // Try all possible vertices to be written to vertex[idx]
+
+    for(auto v : stage[idx]){
+        vertex[idx] = v;
+        backtrack(stage, idx + 1, num_stages);
+    }
+
 
     //for(int i = idx; i < num_stages; i++){
     //    for(int j = 0; j < stage[i].size(); j++){
@@ -38,23 +45,23 @@ void backtrack(vector<string> stage[], int idx, int num_stages){
     //    }
     //}
 
-    for (int i = idx; i < num_stages; i++){
-        bool valid = false;
-        string test_string;
-
-        for(int j = 0; j < stage[i].size(); j++){
-            test_string = stage[i][j];
-            if (stage[i][j] != vertex[idx]){
-                //cout << stage[i][j] <<  " vs " << vertex[idx] << endl;
-                valid = true;
-                break;
-            }
-        }
-        if(valid){
-            vertex[idx] = test_string;
-            backtrack(stage, idx + 1, num_stages);
-        }
-    }
+//    for (int i = idx; i < num_stages; i++){
+//        bool valid = false;
+//        string test_string;
+//
+//        for(int j = 0; j < stage[i].size(); j++){
+//            test_string = stage[i][j];
+//            if (stage[i][j] != vertex[idx]){
+//                //cout << stage[i][j] <<  " vs " << vertex[idx] << endl;
+//                valid = true;
+//                break;
+//            }
+//        }
+//        if(valid){
+//            vertex[idx] = test_string;
+//            backtrack(stage, idx + 1, num_stages);
+//        }
+//    }
 
     //for (int i = 0; i < num_stages; i++){
     //    int count

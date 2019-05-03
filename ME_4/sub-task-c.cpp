@@ -19,15 +19,15 @@ private:
 
 public:
     Graph(int n) : num_vertices(n), __adj(n){}
-    
+
     int vertex_count(){
         return num_vertices;
     }
-    
+
     void add_edge(int u, int v, int weight){
         __adj[u].push_back({v, weight});
     }
-    
+
     vector<pair<int, int> >& adj(int v){
         return __adj[v];
     }
@@ -42,27 +42,43 @@ void print_path(int num_vertices){      // Note: num_vertices here is the number
         cout << vertex[i];
     }
     cout << "]";
-    
+
     // Use this line only for the bonus item.
     // cout << "length = " << /* insert path length */ ;
-    
+
     cout << endl;
 }
 
 void backtrack(Graph& G, int source, int dest, int idx){
     if (idx > 0 && vertex[idx - 1] == dest){
-        print_path(_______________);
+        print_path(idx);
         return;
     }
-    
+
+    if (idx == 0){
+        vertex[idx] = source;
+        backtrack(G, source, dest, idx + 1);
+    }
+
+    else{
+        int curr = vertex[idx - 1];
+        for(auto nxt : G.adj(curr)){
+            vertex[idx] = nxt.first;
+            backtrack(G, source, dest, idx + 1);
+        }
+    }
+}
+
     /*
         Insert code here.
-        
+
         Guide questions:
          - when idx == 0, which vertices are valid?
+         source is valid
          - when idx != 0, which vertices are valid?
+         any vertex in G.adj(vertex[idx - 1])
     */
-}
+
 
 void enumerate_path(Graph& G, int source, int dest){
     backtrack(G, source, dest, 0);
@@ -70,17 +86,17 @@ void enumerate_path(Graph& G, int source, int dest){
 
 int main(){
     ifstream file("directed_graph.txt");
-    
+
     int n, m;   // n - number of vertices, m - number of edges
     file >> n >> m;
-    
+
     Graph G(n);
-    
+
     for(int i = 0; i < m; i++){
         int u, v, weight;
         file >> u >> v >> weight;
         G.add_edge(u, v, weight);
     }
-    
+
     enumerate_path(G, 1, 7);
 }
