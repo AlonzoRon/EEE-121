@@ -25,12 +25,13 @@ Item a[100];
 int opt_val[100][100];
 
 void optimal_selection(int num_items, int capacity){
+    // base case: no available item
     for(int i = 0; i <= capacity; i++) opt_val[0][i] = 0;
 
     for(int i = 1; i <= num_items; i++){
         for(int j = 0; j <= capacity; j++){
-            if (a[i].weight > j){
-                opt_val[i][j] = opt_val[i - 1][j];
+            if (a[i - 1].weight > j){
+                opt_val[i][j] = opt_val[i - 1][j]; // option ignored the last item
             }
             else{
                 opt_val[i][j] = max(opt_val[i - 1][j], a[i].value + opt_val[i][j - a[i].weight]);

@@ -44,6 +44,8 @@ void backtrack(int num_items, int capacity, int idx){
         return;
     }
 
+    // i * a[idx].weight <= capacity
+
     for(int i = 0;i <= capacity/a[idx].weight; i++){
         freq[idx] = i;
         backtrack(num_items, capacity, idx + 1);
