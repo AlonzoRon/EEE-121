@@ -5,7 +5,7 @@ const int inf = 1000000;
 
 class Graph{
 private:
-    int num_vertices;
+    int num_vertices; //vertices are named 0 - n-1
     vector<vector<pair<int, int> > > __adj;
 
 public:
