@@ -57,6 +57,8 @@ int main(){
         }
     }
 
+    // int total_value = (capacity / a[])
+
     cout << total_value << endl;
 
 

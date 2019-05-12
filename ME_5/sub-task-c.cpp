@@ -34,7 +34,7 @@ void optimal_selection(int num_items, int capacity){
                 opt_val[i][j] = opt_val[i - 1][j]; // option ignored the last item
             }
             else{
-                opt_val[i][j] = max(opt_val[i - 1][j], a[i].value + opt_val[i][j - a[i].weight]);
+                opt_val[i][j] = max(opt_val[i - 1][j], a[i - 1].value + opt_val[i][j - a[i - 1].weight]);
             }
         }
     }
@@ -45,7 +45,8 @@ void optimal_selection(int num_items, int capacity){
     while(i != 0){
         if(opt_val[i][j] != opt_val[i - 1][j]){
             cout << "select item " << i - 1 << " with weight = " << a[i - 1].weight << " and value = " << a[i - 1].value << endl;
-            i = i - 1;
+            //i = i - 1;
+            j -= a[i - 1].weight;
             /* insert code (1 pt)*/
         }
         else{
