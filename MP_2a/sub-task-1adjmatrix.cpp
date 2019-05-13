@@ -51,10 +51,23 @@ void Graph::add_edge(int u, int v, Edge e){
     this -> adjacency_list[v].push_back(u);
 }
 
+vector <int> red_past;
 void spanner(int vertex, EdgeColor color, Graph &G, int prev_vertex){
+    //cout << "current vertex: " << vertex<< endl;
     for(auto adjacent:G.adjacency_list[vertex]){
 
-        if(adjacent == prev_vertex) continue;
+        bool no_more = false;
+
+        for (auto x : red_past){
+            //cout << x << "versus" << adjacent << endl;
+            if (x == adjacent && G.adjacency_edgematrix[x][adjacent].subdivisions == 0) {
+                no_more = true;
+                break;
+            }
+        }
+
+        if(no_more) continue;
+
         //if(visited[vertex][adjacent]) continue;
 
 
@@ -64,26 +77,37 @@ void spanner(int vertex, EdgeColor color, Graph &G, int prev_vertex){
         //if (visited[vertex][adjacent] && curr_edge.subdivisions == 0) continue;
         //visited[vertex][adjacent] = true;
 
-        //cout << "Current pairing: " << vertex << "-->" << adjacent << endl;
 
+        cout << "Current pairing: " << vertex << "-->" << adjacent << endl;
         if(color == red){
-            if(curr_edge.subdivisions != 0){
+            if(curr_edge.subdivisions != 0){ // if there is still space in the edge
                 curr_edge.num_red += 1;
                 other_edge.num_red += 1;
 
                 curr_edge.subdivisions -= 1;
                 other_edge.subdivisions -= 1;
+
+                //cout << "Current pairing: " << vertex << "-->" << adjacent << endl;
+                cout << "new numbers (red), subdivisions: " << curr_edge.num_red << " " << curr_edge.subdivisions << endl;
+
+                cout << "red past : ";
+                for(auto x : red_past){
+                    cout << x << " ";
+                }
+                cout << endl;
             }
-            else if(curr_edge.subdivisions == 0 && curr_edge.num_black == 0){
-                //cout << "pumasok rito" << endl;
-                //visited[vertex][adjacent] = true;
+            else if(curr_edge.subdivisions == 0 && curr_edge.num_black == 0){ // if full and no black (meaning all red)
+                red_past.push_back(vertex);
                 spanner(adjacent, color, G, vertex);
+
+
+
+                cout << "new configuration vertex: " << adjacent << endl;
                 //implement recursive shit
             }
-            else if(curr_edge.subdivisions == 0 && curr_edge.num_black > 0){
+            else if(curr_edge.subdivisions == 0 && curr_edge.num_black > 0){ // if full and with black
                 continue;
             }
-            cout << "new numbers (red), subdivisions: " << curr_edge.num_red << " " << curr_edge.subdivisions << endl;
             //cout << "black " << curr_edge.num_black << endl;
 
 
@@ -158,11 +182,13 @@ int main(){
     int initial_coverage = coverage_counter(city, n);
     cout << coverage_counter(city, n) << endl;
 
-    while(coverage_counter(city, n) != 0){
+//    while(coverage_counter(city, n) != 0){
         //spanner(0, red, city, -100000);
         //spanner(2, black, city, -100000);
         //cout << "iterate" << endl;
         //spanner(0, black, city, -100000);
+
+    for(int i = 0; i < 100; i++){
 
         spanner(0, red, city, -100000);
 

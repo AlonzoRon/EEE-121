@@ -54,8 +54,8 @@ void Graph::add_edge(int u, int v, Edge e){
 void spanner(int vertex, EdgeColor color, Graph &G, int prev_vertex){
     for(auto adjacent:G.adjacency_list[vertex]){
 
-        if(adjacent == prev_vertex) continue;
-        //if(visited[vertex][adjacent]) continue;
+        //if(adjacent == prev_vertex) continue;
+        if(visited[vertex][adjacent] || visited[adjacent][vertex]) continue;
 
 
         Edge &curr_edge = G.adjacency_edgematrix[vertex][adjacent];
@@ -76,7 +76,9 @@ void spanner(int vertex, EdgeColor color, Graph &G, int prev_vertex){
             }
             else if(curr_edge.subdivisions == 0 && curr_edge.num_black == 0){
                 //cout << "pumasok rito" << endl;
-                //visited[vertex][adjacent] = true;
+                cout << "tagged " << vertex << " and " << adjacent  << endl;
+                visited[vertex][adjacent] = true;
+                visited[adjacent][vertex] = true;
                 spanner(adjacent, color, G, vertex);
                 //implement recursive shit
             }
@@ -132,7 +134,7 @@ int coverage_counter(Graph &G, int n){
 
 
 int main(){
-    ifstream input("coffee_city_4x4.txt");
+    ifstream input("coffee_city_3x2.txt");
 
     int n, m;
     input >> n >> m;
@@ -164,7 +166,7 @@ int main(){
         //cout << "iterate" << endl;
         //spanner(0, black, city, -100000);
 
-        spanner(0, red, city, -100000);
+        spanner(1, red, city, -100000);
 
         //spanner(2, red, city, -10000);
         //spanner(5, black, city, -10000);
