@@ -226,7 +226,7 @@ vector<vector<int> > combinations_generator(int possible_positions, int red_shop
     return megalist;
 }
 
-int main(){
+int city_evaluator(vector<int> red_shops){
     ifstream input("coffee_city.txt");
     int n, m;
     input >> n >> m;
@@ -262,7 +262,6 @@ int main(){
     vector<int> black_summary; black_summary.reserve(total_vertices);
     vector<int> red_summary; red_summary.reserve(total_vertices);
 
-    vector<int> red_shops = {6, 8};
     black_summary = finalizer(black_shops, coffee_city);
     red_summary = finalizer(red_shops, coffee_city);
 
@@ -275,33 +274,33 @@ int main(){
     return red_count;
 }
 
-//int main(){
-//    ifstream input("coffee_city.txt");
-//    int num_vertices, m;
-//    input >> num_vertices >> m;
-//
-//
-//    for(int i = 0; i < m; i++){
-//        int u, v, w;
-//        input >> u >> v >> w;
-//    }
-//
-//    int r, s;
-//    int number_redwanted, number_black;
-//    input >> r >> s;
-//
-//    number_black = r;
-//    number_redwanted = s;
-//
-//    int num_possiblepositions = num_vertices - number_black;
-//
-//    input.clear();
-//    input.seekg(0, ios::beg);
-//
-//    vector<int> vec;
-//    vec.push_back(6);
-//    vec.push_back(8);
-//
-//    city_evaluator(vec);
-//
-//}
+int main(){
+    ifstream input("coffee_city.txt");
+    int num_vertices, m;
+    input >> num_vertices >> m;
+
+
+    for(int i = 0; i < m; i++){
+        int u, v, w;
+        input >> u >> v >> w;
+    }
+
+    int r, s;
+    int number_redwanted, number_black;
+    input >> r >> s;
+
+    number_black = r;
+    number_redwanted = s;
+
+    int num_possiblepositions = num_vertices - number_black;
+
+    input.clear();
+    input.seekg(0, ios::beg);
+
+    vector<int> vec;
+    vec.push_back(6);
+    vec.push_back(8);
+
+    city_evaluator(vec);
+
+}

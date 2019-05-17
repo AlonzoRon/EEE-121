@@ -155,7 +155,6 @@ int distance_calculator(int non_red, int red, Graph &G, int edge_weight){
 
     non_red_dist = G.vertex_colors[non_red].second;
     red_dist = G.vertex_colors[red].second;
-    cout << "non_red_dist: " << non_red_dist << "  red_dist: " << red_dist << endl;
 
     distance =  (((red_dist + non_red_dist + edge_weight) / 2) - non_red_dist);
 
@@ -209,7 +208,6 @@ int coverage_calculator(Graph &G, vector<vector<pair<int, int> > > &adjacency_li
             visited[i][dest] = true;
             visited[dest][i] = true;
         }
-        cout << endl;
     }
 
     return total_red;
@@ -236,13 +234,10 @@ int city_evaluator(vector<int> red_shops, Graph coffee_city, vector <int> black_
     red_summary = finalizer(red_shops, coffee_city);
 
     vertex_painter(black_summary, red_summary, coffee_city);
-    coffee_city.vertex_colors_printer();
 
     int red_count = coverage_calculator(coffee_city, adjacency_list);
 
-    coverage_printer(red_count, totaledge_weight);
-
-
+    //coverage_printer(red_count, totaledge_weight);
 
     return red_count;
 
@@ -270,7 +265,7 @@ vector<vector<int> > combinations_generator(int possible_positions, int red_shop
 }
 
 int main(){
-    ifstream input("coffee_city.txt");
+    ifstream input("coffee_citydiamond.txt");
     int num_vertices, m;
     input >> num_vertices >> m;
 
@@ -340,11 +335,43 @@ int main(){
     }
     cout << endl;
 
-    cout << coffee_city.num_vertices << endl;
-    city_evaluator({6,8}, coffee_city, black_shops, totaledge_weight, adjacency_list);
-    city_evaluator({0,1}, coffee_city, black_shops, totaledge_weight, adjacency_list);
-    city_evaluator({0,2}, coffee_city, black_shops, totaledge_weight, adjacency_list);
-    city_evaluator({0,3}, coffee_city, black_shops, totaledge_weight, adjacency_list);
-    city_evaluator({0,4}, coffee_city, black_shops, totaledge_weight, adjacency_list);
+    vector<int> optimal_positions;
+    int max = -100;
+
+    for(auto red_shoplocationsindex: combis){
+        vector<int> true_locations;
+
+        for (auto index:red_shoplocationsindex){
+            true_locations.push_back(positions_vertex[index]);
+        }
+
+        for (auto true_loc:true_locations){
+            cout << true_loc << " ";
+        }
+
+        int red_cov = city_evaluator(true_locations, coffee_city, black_shops, totaledge_weight, adjacency_list);
+
+        if(red_cov > max){
+            max = red_cov;
+            optimal_positions = true_locations;
+        }
+
+        cout << endl;
+
+    }
+
+    cout << "Install coffee shops at junctions: ";
+    for(auto position:optimal_positions){
+        cout << position << ", ";
+    }
+    cout << endl;
+
+    coverage_printer(max, totaledge_weight);
+
+    //city_evaluator({6,8}, coffee_city, black_shops, totaledge_weight, adjacency_list);
+    //city_evaluator({0,1}, coffee_city, black_shops, totaledge_weight, adjacency_list);
+    //city_evaluator({0,2}, coffee_city, black_shops, totaledge_weight, adjacency_list);
+    //city_evaluator({0,3}, coffee_city, black_shops, totaledge_weight, adjacency_list);
+    //city_evaluator({0,4}, coffee_city, black_shops, totaledge_weight, adjacency_list);
 
 }
