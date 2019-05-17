@@ -1,4 +1,4 @@
-#include<algorithm>
+include<algorithm>
 #include<iostream>
 #include<vector>
 #include<list>
@@ -338,42 +338,43 @@ int main(){
     vector<int> optimal_positions;
     int max = -100;
 
-    for(auto red_shoplocationsindex: combis){
-        vector<int> true_locations;
+    //for(auto red_shoplocationsindex: combis){
+    //    vector<int> true_locations;
+//
+    //    for (auto index:red_shoplocationsindex){
+    //        true_locations.push_back(positions_vertex[index]);
+    //    }
+//
+    //    for (auto true_loc:true_locations){
+    //        cout << true_loc << " ";
+    //    }
+//
+    //    int red_cov = city_evaluator(true_locations, coffee_city, black_shops, totaledge_weight, adjacency_list);
+//
+    //    if(red_cov > max){
+    //        max = red_cov;
+    //        optimal_positions = true_locations;
+    //    }
+//
+    //    cout << endl;
+//
+    //}
+//
+    //cout << "Install coffee shops at junctions: ";
+    //int i = 0;
+    //for(auto position:optimal_positions){
+    //    cout << position;
+    //    if (i != optimal_positions.size() - 1){
+    //        cout << ", ";
+    //    }
+    //    i++;
+    //}
+    //cout << endl;
 
-        for (auto index:red_shoplocationsindex){
-            true_locations.push_back(positions_vertex[index]);
-        }
+    //coverage_printer(max, totaledge_weight);
 
-        for (auto true_loc:true_locations){
-            cout << true_loc << " ";
-        }
-
-        int red_cov = city_evaluator(true_locations, coffee_city, black_shops, totaledge_weight, adjacency_list);
-
-        if(red_cov > max){
-            max = red_cov;
-            optimal_positions = true_locations;
-        }
-
-        cout << endl;
-
-    }
-
-    cout << "Install coffee shops at junctions: ";
-    int i = 0;
-    for(auto position:optimal_positions){
-        cout << position;
-        if (i != optimal_positions.size() - 1){
-            cout << ", ";
-        }
-        i++;
-    }
-    cout << endl;
-
-    coverage_printer(max, totaledge_weight);
-
-    city_evaluator({4, 6, 10}, coffee_city, black_shops, totaledge_weight, adjacency_list);
+    int coverage = city_evaluator({10, 4, 6}, coffee_city, black_shops, totaledge_weight, adjacency_list);
+    coverage_printer(coverage, totaledge_weight);
     //city_evaluator({0,1}, coffee_city, black_shops, totaledge_weight, adjacency_list);
     //city_evaluator({0,2}, coffee_city, black_shops, totaledge_weight, adjacency_list);
     //city_evaluator({0,3}, coffee_city, black_shops, totaledge_weight, adjacency_list);
