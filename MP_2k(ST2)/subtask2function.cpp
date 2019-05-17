@@ -4,6 +4,7 @@
 #include<queue>
 #include<fstream>
 #include<cmath>
+#include<algorithm>
 using namespace std;
 
 
@@ -26,8 +27,6 @@ public:
     list<pair<int, int> > *adj;
     vector<vector <Edge> > color_matrix;
     vector<pair <color, int> > vertex_colors;
-    vector<vector <int> > weight_matrix;
-
 
     Graph(int vertices){ // constructor
         num_vertices = vertices;
@@ -38,19 +37,12 @@ public:
             color_matrix[i].reserve(vertices);
         }
 
-        weight_matrix.reserve(vertices);
-        for(int i = 0; i < vertices; i++){
-            weight_matrix[i].reserve(vertices);
-        }
-
+        vertex_colors.reserve(vertices);
     }
 
     void add_edge(int u, int v, int w){
         adj[u].push_back({v, w});
         adj[v].push_back({u, w});
-
-        weight_matrix[u][v] = w;
-        weight_matrix[v][u] = w;
 
         color_matrix[u][v] = blank_canvas;
         color_matrix[v][u] = blank_canvas;
@@ -64,7 +56,7 @@ public:
 
         vector<int> dist(num_vertices, inf);
 
-        pq.push({0,     src});
+        pq.push({0, src});
         dist[src] = 0;
 
         while(!pq.empty()){
@@ -81,6 +73,7 @@ public:
                 }
             }
         }
+
         return dist;
     }
 
@@ -108,25 +101,29 @@ vector<int> finalizer(vector<int> shop_locations, Graph &G){
 
 void vertex_painter(vector<int> black_list, vector<int> red_list, Graph &G){
     for(int i = 0; i < G.num_vertices; i++){
+
         if(red_list[i] < black_list[i]){
-            G.vertex_colors.push_back({red, red_list[i]});
+            G.vertex_colors[i] = {red, red_list[i]};
         }
         else if(black_list[i] < red_list[i]){
-            G.vertex_colors.push_back({black, black_list[i]});
+            G.vertex_colors[i] = {black, black_list[i]};
         }
         else if(black_list[i] == red_list[i]){
-            G.vertex_colors.push_back({indifferent, red_list[i]});
+            G.vertex_colors[i] = {indifferent, red_list[i]};
         }
     }
 }
 
-int distance_calculator(int non_red, int red, Graph &G){
-    int non_red_dist, red_dist, edge_weight;
+void vertex_unpainter(Graph &G){
+    G.vertex_colors.clear();
+}
+
+int distance_calculator(int non_red, int red, Graph &G,int edge_weight){
+    int non_red_dist, red_dist;
     int distance;
 
     non_red_dist = G.vertex_colors[non_red].second;
     red_dist = G.vertex_colors[red].second;
-    edge_weight = G.weight_matrix[red][non_red];
 
     distance =  (((red_dist + non_red_dist + edge_weight) / 2) - non_red_dist);
 
@@ -150,9 +147,7 @@ int coverage_calculator(Graph &G){
 
             int dest = destination.first;
             int edge_weight = destination.second;
-
             color source_color = G.vertex_colors[i].first;
-
             color dest_color = G.vertex_colors[dest].first;
 
             if(visited[i][dest]) {
@@ -164,23 +159,23 @@ int coverage_calculator(Graph &G){
                     total_red += edge_weight;
                 }
                 else if (dest_color == black){
-                    total_red += distance_calculator(i, dest, G);
+                    total_red += distance_calculator(i, dest, G, edge_weight);
                 }
                 else if (dest_color == indifferent){
-                    total_red += distance_calculator(i, dest, G);
+                    total_red += distance_calculator(i, dest, G, edge_weight);
                 }
 
             }
 
             else if(source_color == black){
                 if (dest_color == red){
-                    total_red += distance_calculator(dest, i, G);
+                    total_red += distance_calculator(dest, i, G, edge_weight);
                 }
             }
 
             else if(source_color == indifferent){
                 if (dest_color == red){
-                    total_red += distance_calculator(dest, i, G);
+                    total_red += distance_calculator(dest, i, G, edge_weight);
                 }
             }
 
@@ -204,7 +199,28 @@ void coverage_printer(int num_red, int edges){
     cout << coverage << "% coverage." << endl;
 }
 
-int main(){
+vector<vector<int> > combinations_generator(int possible_positions, int red_shopnumber){
+    vector<vector<int> > megalist;
+
+    vector<bool> v(possible_positions);
+    fill(v.begin(), v.begin() + red_shopnumber, true);
+
+    do{
+        vector<int> current;
+        for(int i =0; i < possible_positions; i++){
+            if (v[i]){
+                cout << i << " ";
+                current.push_back(i);
+            }
+        }
+        megalist.push_back(current);
+        cout << endl;
+    } while(prev_permutation(v.begin(), v.end()));
+
+    return megalist;
+}
+
+int city_evaluator(){
     ifstream input("coffee_city.txt");
     int n, m;
     input >> n >> m;
@@ -224,11 +240,10 @@ int main(){
     }
 
     int r, s;
-    int number_red, number_black;
+    int number_redwanted, number_black;
     input >> r >> s;
 
     number_black = r;
-    number_red = s;
 
     vector<int> black_shops;
     for(int i = 0; i < number_black; i++){
@@ -238,7 +253,81 @@ int main(){
         black_shops.push_back(black_shop);
     }
 
-    vector<int> red_shops = {6, 8};
+    vector<int> black_summary; black_summary.reserve(total_vertices);
+    black_summary = finalizer(black_shops, coffee_city);
+    //at this point black is final, but red won't be
+
+    // this is the part when we count the number of available shop_locations
+    // and generate ALL possible combinations of n(available slots) container
+    //then iterate and compare the values and get the highest one
+
+    number_redwanted = s;
+    int possible_positions = coffee_city.num_vertices - number_black;
+
+    cout << possible_positions << endl;
+
+    vector< vector< int> > combis = combinations_generator(possible_positions, number_redwanted);
+
+    //make a vector sized 0 - 13
+
+    vector<int> positions_vertex;
+    //fill this vector of only possible
+
+    for(int i = 0; i < coffee_city.num_vertices; i++){
+        bool inside_black = false;
+        for(auto black: black_shops){
+            if(i == black){
+                inside_black = true;
+                break;
+            }
+        }
+        if (inside_black) continue;
+        positions_vertex.push_back(i);
+    }
+
+
+    for(auto x: positions_vertex){
+        cout << x << " ";
+    }
+    cout << endl;
+
+    // at this point positions[index] pertains to the TRUE position and not the index
+
+
+    for(auto red_shoplocationsindex: combis){
+        vector<int> true_locations;
+
+        for (auto index:red_shoplocationsindex){
+            true_locations.push_back(positions_vertex[index]);
+        }
+
+        vector<int> red_summary; red_summary.reserve(coffee_city.num_vertices);
+        red_summary = finalizer(true_locations, coffee_city);
+        vertex_painter(black_summary, red_summary, coffee_city);
+
+
+        int red_count = coverage_calculator(coffee_city);
+
+        for (auto true_loc:true_locations){
+            cout << true_loc << " ";
+        }
+            cout << endl;
+        coverage_printer(red_count, totaledge_weight);
+
+        vertex_unpainter(coffee_city);
+        //vertex_unpainter
+
+    }
+
+int main(){
+
+}
+
+
+
+    /*
+
+    vector<int> red_shops;
     for(int i = 0; i < number_red; i++){
         int red_shop;
         input >> red_shop;
@@ -246,18 +335,15 @@ int main(){
         red_shops.push_back(red_shop);
     }
 
-    vector<int> black_summary; black_summary.reserve(total_vertices);
     vector<int> red_summary; red_summary.reserve(total_vertices);
 
-    black_summary = finalizer(black_shops, coffee_city);
     red_summary = finalizer(red_shops, coffee_city);
 
     vertex_painter(black_summary, red_summary, coffee_city);
 
     int red_count = coverage_calculator(coffee_city);
-
     coverage_printer(red_count, totaledge_weight);
 
-    cout << coffee_city.adj->size() << endl;
+    */
 
 }

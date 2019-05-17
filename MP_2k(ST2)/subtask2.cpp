@@ -40,6 +40,12 @@ public:
         vertex_colors.reserve(vertices);
     }
 
+    void deconstruct(){
+        delete adj;
+        color_matrix.clear();
+        vertex_colors.clear();
+    }
+
     void add_edge(int u, int v, int w){
         adj[u].push_back({v, w});
         adj[v].push_back({u, w});
@@ -101,9 +107,11 @@ vector<int> finalizer(vector<int> shop_locations, Graph &G){
 
 void vertex_painter(vector<int> black_list, vector<int> red_list, Graph &G){
     for(int i = 0; i < G.num_vertices; i++){
+        cout << "ran" << endl;
 
         if(red_list[i] < black_list[i]){
             G.vertex_colors[i] = {red, red_list[i]};
+            cout << "made red" << endl;
         }
         else if(black_list[i] < red_list[i]){
             G.vertex_colors[i] = {black, black_list[i]};
@@ -314,6 +322,8 @@ int main(){
         coverage_printer(red_count, totaledge_weight);
 
         vertex_unpainter(coffee_city);
+
+        //coffee_city.deconstruct();
         //vertex_unpainter
 
     }

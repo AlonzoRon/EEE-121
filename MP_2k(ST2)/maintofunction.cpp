@@ -4,6 +4,7 @@
 #include<queue>
 #include<fstream>
 #include<cmath>
+#include<algorithm>
 using namespace std;
 
 
@@ -204,6 +205,27 @@ void coverage_printer(int num_red, int edges){
     cout << coverage << "% coverage." << endl;
 }
 
+vector<vector<int> > combinations_generator(int possible_positions, int red_shopnumber){
+    vector<vector<int> > megalist;
+
+    vector<bool> v(possible_positions);
+    fill(v.begin(), v.begin() + red_shopnumber, true);
+
+    do{
+        vector<int> current;
+        for(int i =0; i < possible_positions; i++){
+            if (v[i]){
+                cout << i << " ";
+                current.push_back(i);
+            }
+        }
+        megalist.push_back(current);
+        cout << endl;
+    } while(prev_permutation(v.begin(), v.end()));
+
+    return megalist;
+}
+
 int main(){
     ifstream input("coffee_city.txt");
     int n, m;
@@ -223,12 +245,11 @@ int main(){
         // we use w * 2 to prevent any problems with 0.5 for integers
     }
 
-    int r, s;
-    int number_red, number_black;
-    input >> r >> s;
+    int r;
+    int number_black;
+    input >> r;
 
     number_black = r;
-    number_red = s;
 
     vector<int> black_shops;
     for(int i = 0; i < number_black; i++){
@@ -238,17 +259,10 @@ int main(){
         black_shops.push_back(black_shop);
     }
 
-    vector<int> red_shops = {6, 8};
-    for(int i = 0; i < number_red; i++){
-        int red_shop;
-        input >> red_shop;
-
-        red_shops.push_back(red_shop);
-    }
-
     vector<int> black_summary; black_summary.reserve(total_vertices);
     vector<int> red_summary; red_summary.reserve(total_vertices);
 
+    vector<int> red_shops = {6, 8};
     black_summary = finalizer(black_shops, coffee_city);
     red_summary = finalizer(red_shops, coffee_city);
 
@@ -258,6 +272,36 @@ int main(){
 
     coverage_printer(red_count, totaledge_weight);
 
-    cout << coffee_city.adj->size() << endl;
-
+    return red_count;
 }
+
+//int main(){
+//    ifstream input("coffee_city.txt");
+//    int num_vertices, m;
+//    input >> num_vertices >> m;
+//
+//
+//    for(int i = 0; i < m; i++){
+//        int u, v, w;
+//        input >> u >> v >> w;
+//    }
+//
+//    int r, s;
+//    int number_redwanted, number_black;
+//    input >> r >> s;
+//
+//    number_black = r;
+//    number_redwanted = s;
+//
+//    int num_possiblepositions = num_vertices - number_black;
+//
+//    input.clear();
+//    input.seekg(0, ios::beg);
+//
+//    vector<int> vec;
+//    vec.push_back(6);
+//    vec.push_back(8);
+//
+//    city_evaluator(vec);
+//
+//}
