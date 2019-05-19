@@ -238,7 +238,7 @@ vector<vector<int> > combinations_generator(int possible_positions, int red_shop
 }
 
 int main(){
-    ifstream input("coffee_city.txt");
+    ifstream input("coffee_city_b-large.txt");
     int num_vertices, m;
     input >> num_vertices >> m;
 
