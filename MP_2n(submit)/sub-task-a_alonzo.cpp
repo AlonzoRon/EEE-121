@@ -77,24 +77,6 @@ public:
         return dist;
     }
 
-    void vertex_colors_printer(){
-        int i = 0;
-        for(auto vertex:vertex_colors){
-            cout << i << " ";
-            color curr_color;
-            int vertex_value;
-
-            curr_color = vertex.first;
-            vertex_value = vertex.second;
-
-            if(curr_color == red) cout << "red ";
-            else if(curr_color == black) cout << "black ";
-            else if(curr_color == indifferent) cout << "indifferent ";
-
-            cout << vertex_value << endl;
-            i++;
-        }
-    }
 };
 
 // converts the multi_list of all dist[] arrays to one summary array (gets the lowest val)
@@ -158,6 +140,9 @@ int coverage_calculator(Graph &G, vector<vector<pair<int, int> > > &adjacency_li
             visited[i][j] = false;
         }
     }
+    int red_only = 0;
+    int redtoindiff = 0;
+    int redtoblack = 0;
     for(int i = 0; i < G.num_vertices; i++){
         for(auto adjacent:adjacency_list[i]){
 
@@ -174,22 +159,32 @@ int coverage_calculator(Graph &G, vector<vector<pair<int, int> > > &adjacency_li
             if (source_color == red){
                 if(dest_color == red){
                     total_red += edge_weight;
+                    red_only += edge_weight;
+                    cout << "red added " << edge_weight << " new total = " << red_only << endl;
                 }
                 else if(dest_color == black){
                     total_red += distance_calculator(i, dest, G, edge_weight);
+                    redtoblack += distance_calculator(i, dest, G, edge_weight);
+                    cout << "new rtb: "  << redtoblack << endl;
                 }
                 else if(dest_color == indifferent){
                     total_red += distance_calculator(i, dest, G, edge_weight);
+                    redtoindiff += distance_calculator(i, dest, G, edge_weight);
+                    cout << " new total = " << redtoindiff << endl;
                 }
             }
             else if (source_color == black){
                 if(dest_color == red){
                     total_red += distance_calculator(dest, i, G, edge_weight);
+                    redtoblack += distance_calculator(dest, i, G, edge_weight);
+                    cout << "new rtb: "  << redtoblack << endl;
                 }
             }
             else if (source_color == indifferent){
                 if(dest_color == red){
                     total_red += distance_calculator(dest, i, G, edge_weight);
+                    redtoindiff += distance_calculator(i, dest, G, edge_weight);
+                    cout << " new total = " << redtoindiff << endl;
                 }
             }
             visited[i][dest] = true;
@@ -204,6 +199,8 @@ int coverage_calculator(Graph &G, vector<vector<pair<int, int> > > &adjacency_li
 void coverage_printer(int num_red, int edges){
     double coverage;
 
+    cout << "num red: " << num_red << endl;
+    cout << "edges: " << edges << endl;
     coverage = (double) num_red / (double) edges;
 
     coverage *= 10000;
@@ -226,7 +223,6 @@ int city_evaluator(vector<int> red_shops, Graph coffee_city, vector <int> black_
 
     // paint them accordingly using the created summary arrays
     vertex_painter(black_summary, red_summary, coffee_city);
-    coffee_city.vertex_colors_printer();
 
     // calculate the coverage for this iteration, then return the value
     int red_count = coverage_calculator(coffee_city, adjacency_list);

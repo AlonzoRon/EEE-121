@@ -77,24 +77,6 @@ public:
         return dist;
     }
 
-    void vertex_colors_printer(){
-        int i = 0;
-        for(auto vertex:vertex_colors){
-            cout << i << " ";
-            color curr_color;
-            int vertex_value;
-
-            curr_color = vertex.first;
-            vertex_value = vertex.second;
-
-            if(curr_color == red) cout << "red ";
-            else if(curr_color == black) cout << "black ";
-            else if(curr_color == indifferent) cout << "indifferent ";
-
-            cout << vertex_value << endl;
-            i++;
-        }
-    }
 };
 
 // converts the multi_list of all dist[] arrays to one summary array (gets the lowest val)
@@ -226,7 +208,6 @@ int city_evaluator(vector<int> red_shops, Graph coffee_city, vector <int> black_
 
     // paint them accordingly using the created summary arrays
     vertex_painter(black_summary, red_summary, coffee_city);
-    coffee_city.vertex_colors_printer();
 
     // calculate the coverage for this iteration, then return the value
     int red_count = coverage_calculator(coffee_city, adjacency_list);
@@ -257,7 +238,7 @@ vector<vector<int> > combinations_generator(int possible_positions, int red_shop
 }
 
 int main(){
-    ifstream input("coffee_city_large.txt");
+    ifstream input("coffee_city.txt");
     int num_vertices, m;
     input >> num_vertices >> m;
 
@@ -280,11 +261,11 @@ int main(){
     }
 
     int r, s;
-    int number_red, number_black;
+    int number_redwanted, number_black;
     input >> r >> s;
 
     number_black = r;
-    number_red = s;
+    number_redwanted = s;
 
     vector<int> black_shops;
     for(int i = 0; i < number_black; i++){
@@ -294,14 +275,61 @@ int main(){
         black_shops.push_back(black_shop);
     }
 
-    vector<int> red_shops;
-    for(int i = 0; i < number_red; i++){
-        int red_shop;
-        input >> red_shop;
+    // this is the part when we count the number of available shop_locations
+    // and generate ALL possible combinations of n(available slots) container
+    //then iterate and compare the values and get the highest one
 
-        red_shops.push_back(red_shop);
+    number_redwanted = s;
+    int possible_positions = num_vertices - number_black;
+    vector<int> positions_vertex; // a vector containing the possible_positions
+
+    for(int i = 0; i < num_vertices; i++){
+        bool inside_black = false;
+        for(auto black: black_shops){
+            if(i == black){
+                inside_black = true;
+                break;
+            }
+        }
+        if (inside_black) continue;
+        positions_vertex.push_back(i);
     }
-    int red_cov = city_evaluator(red_shops, coffee_city, black_shops, totaledge_weight, adjacency_list);
-    coverage_printer(red_cov, totaledge_weight);
+
+
+    vector< vector< int> > combis = combinations_generator(possible_positions, number_redwanted);
+    vector<int> optimal_positions;
+    int max = -100;
+    for(auto red_shoplocationsindex: combis){
+        vector<int> true_locations;
+
+        // function above checks the positions vertex and puts the true and correct
+        // vertices of red to be placed inside true_locations vector
+        for (auto index:red_shoplocationsindex){
+            true_locations.push_back(positions_vertex[index]);
+        }
+
+        // inserts true_locations to city_evaluator function
+        int red_cov = city_evaluator(true_locations, coffee_city, black_shops, totaledge_weight, adjacency_list);
+
+        if(red_cov > max){
+            max = red_cov;
+            optimal_positions = true_locations;
+        }
+
+
+    }
+
+    // this part just prints the output
+    cout << "Install coffee shops at junctions: ";
+    int i = 0;
+    for(auto position:optimal_positions){
+        cout << position;
+        if (i != optimal_positions.size() - 1){
+            cout << ", ";
+        }
+        i++;
+    }
+    cout << endl;
+    coverage_printer(max, totaledge_weight);
 
 }
